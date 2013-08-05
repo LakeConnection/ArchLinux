@@ -1,0 +1,35 @@
+pkgname=smplayer-0.8.5-SVN
+pkgver=0
+pkgrel=1
+pkgdesc="A complete front-end for MPlayer"
+arch=('i686' 'x86_64')
+url="http://smplayer.sourceforge.net/"
+license=('GPL')
+depends=('mplayer' 'qt4')
+makedepends=('subversion')
+optdepends=('smtube-svn: For watching YouTube videos')
+provides=('smplayer')
+conflicts=('smplayer')
+install=smplayer.install
+source=('smplayer::svn+https://subversion.assembla.com/svn/smplayer/smplayer/trunk/')
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$SRCDEST/smplayer"
+  svnversion
+}
+
+prepare() {
+  cd "$srcdir/smplayer"
+  sed -i 's:#\(DEFINES += NO_DEBUG_ON_CONSOLE\):\1:' src/smplayer.pro
+}
+
+build() {
+  cd "$srcdir/smplayer"
+  make PREFIX=/usr QMAKE=qmake-qt4 LRELEASE=lrelease-qt4
+}
+
+package() {
+  cd "$srcdir/smplayer"
+  make PREFIX="$pkgdir/usr" install
+}
