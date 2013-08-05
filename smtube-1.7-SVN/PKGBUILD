@@ -1,0 +1,32 @@
+pkgname=smtube-1.7-SVN
+pkgver=0
+pkgrel=1
+pkgdesc="Search, download and play videos from YouTube. SVN build."
+arch=('i686' 'x86_64')
+url="http://smplayer.sourceforge.net"
+license=('GPL')
+depends=('smplayer')
+provides=('smtube')
+conflicts=('smtube')
+makedepends=('subversion')
+install=smtube.install
+
+source=('smtube::svn+https://subversion.assembla.com/svn/smplayer/smtube/trunk/')
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$SRCDEST/smtube"
+  svnversion
+}
+
+build() {
+  cd "$srcdir/smtube"
+  #build
+  ./get_svn_revision.sh
+  make PREFIX="/usr" QMAKE=qmake-qt4 LRELEASE=lrelease-qt4
+}
+
+package() {
+  cd "$srcdir/smtube"
+  make DESTDIR="$pkgdir" install
+}
